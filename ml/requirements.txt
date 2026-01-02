@@ -1,0 +1,9 @@
+torch
+transformers
+streamlit
+regex
+fastapi
+uvicorn
+pymongo
+python-dotenv
+pydantic[email]
