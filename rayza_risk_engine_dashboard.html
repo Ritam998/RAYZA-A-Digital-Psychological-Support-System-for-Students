@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAYZA — Developer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #131825;
+  --surface-hover: #1a1f30;
+  --border: #232938;
+  --text: #e4e6eb;
+  --text-muted: #8b92a8;
+  --text-dim: #5a6175;
+  
+  --primary: #00d4ff;
+  --primary-glow: rgba(0, 212, 255, 0.3);
+  
+  --success: #00ff88;
+  --success-bg: rgba(0, 255, 136, 0.1);
+  
+  --warning: #ffa726;
+  --warning-bg: rgba(255, 167, 38, 0.1);
+  
+  --danger: #ff4757;
+  --danger-bg: rgba(255, 71, 87, 0.1);
+  
+  --critical: #ff1744;
+  --critical-bg: rgba(255, 23, 68, 0.15);
+  
+  --sos: #c2185b;
+  --sos-bg: rgba(194, 24, 91, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+.dashboard {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 70px 1fr;
+  gap: 0;
+}
+
+/* ═══════════════════ TOPBAR ═══════════════════ */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary), #00a8cc);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50% { box-shadow: 0 0 20px 8px var(--primary-glow); }
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--success-bg);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+  margin-left: auto;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.refresh-btn {
+  background: linear-gradient(135deg, var(--primary), #00a8cc);
+  color: white;
+  border: none;
+  padding: 0 20px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.nav-section {
+  margin-bottom: 24px;
+}
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 168, 204, 0.1));
+  color: var(--primary);
+  border-left: 3px solid var(--primary);
+}
+
+.nav-icon {
+  font-size: 18px;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ═══════════════════ MAIN CONTENT ═══════════════════ */
+.main-content {
+  padding: 32px;
+  overflow-y: auto;
+  height: calc(100vh - 70px);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+}
+
+.stat-change {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-change.positive {
+  color: var(--success);
+}
+
+.stat-change.negative {
+  color: var(--danger);
+}
+
+/* ═══════════════════ LIVE FEED ═══════════════════ */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-pulse {
+  width: 10px;
+  height: 10px;
+  background: var(--danger);
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-tab:hover {
+  background: var(--surface-hover);
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, var(--primary), #00a8cc);
+  border-color: var(--primary);
+  color: white;
+}
+
+.feed-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.feed-item {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+  transition: background 0.2s;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.feed-item:hover {
+  background: var(--surface-hover);
+}
+
+.feed-item:last-child {
+  border-bottom: none;
+}
+
+.feed-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.feed-content {
+  flex: 1;
+}
+
+.feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.feed-user {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.feed-time {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.feed-message {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.feed-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-badge {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-score {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.badge-low {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-medium {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-high {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-critical {
+  background: var(--critical-bg);
+  color: var(--critical);
+}
+
+.badge-sos {
+  background: var(--sos-bg);
+  color: var(--sos);
+  animation: pulse-sos 1s infinite;
+}
+
+@keyframes pulse-sos {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ═══════════════════ USER HISTORY MODAL ═══════════════════ */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+
+.modal.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.close-modal {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+
+.close-modal:hover {
+  background: var(--surface-hover);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.modal-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.user-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.user-stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.user-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.user-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--primary), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -38px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--surface);
+}
+
+.timeline-date {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+}
+
+.timeline-message {
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.timeline-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════ CHART ═══════════════════ */
+.chart-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.chart {
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  padding: 20px;
+}
+
+.chart-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--primary), transparent);
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.chart-bar:hover {
+  opacity: 0.8;
+  transform: scaleY(1.05);
+}
+
+.chart-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <span>RAYZA DEV</span>
+    </div>
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span>LIVE</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="toggleFullscreen()">⛶</button>
+      <button class="icon-btn" onclick="exportData()">↓</button>
+      <button class="icon-btn refresh-btn" onclick="refreshData()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">📡</span>
+        <span>Live Feed</span>
+        <span class="nav-badge" id="live-count">0</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>Users</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🚨</span>
+        <span>Alerts</span>
+        <span class="nav-badge" id="alert-count">0</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Analytics</div>
+      <div class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Trends</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Accuracy</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">⚡</span>
+        <span>Performance</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">System</div>
+      <div class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">📝</span>
+        <span>Logs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Messages</div>
+        <div class="stat-value" id="total-messages">0</div>
+        <div class="stat-change positive">
+          <span>↑</span> <span id="messages-change">0</span> today
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Alerts Triggered</div>
+        <div class="stat-value" id="total-alerts">0</div>
+        <div class="stat-change" id="alerts-change">
+          <span>↑</span> <span>0</span> this hour
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Active Users</div>
+        <div class="stat-value" id="active-users">0</div>
+        <div class="stat-change positive">
+          <span>↑</span> <span>0</span> online now
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Avg Risk Score</div>
+        <div class="stat-value" id="avg-score">0.0</div>
+        <div class="stat-change negative">
+          <span>↓</span> <span>12%</span> vs yesterday
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE FEED -->
+    <div class="section-header">
+      <div class="section-title">
+        <div class="live-pulse"></div>
+        Live Activity Feed
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterFeed('all')">All</button>
+        <button class="filter-tab" onclick="filterFeed('high')">High Risk</button>
+        <button class="filter-tab" onclick="filterFeed('sos')">SOS</button>
+      </div>
+    </div>
+
+    <div class="feed-container" id="live-feed">
+      <!-- Feed items will be inserted here -->
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-container">
+      <div class="section-title" style="margin-bottom: 24px;">
+        Risk Score Distribution (Last 24h)
+      </div>
+      <div class="chart" id="risk-chart">
+        <!-- Chart bars will be generated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER HISTORY MODAL -->
+<div class="modal" id="user-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>📊</span>
+        <span id="modal-user-name">User History</span>
+      </div>
+      <button class="close-modal" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="user-stats">
+        <div class="user-stat">
+          <div class="user-stat-label">Total Messages</div>
+          <div class="user-stat-value" id="modal-message-count">0</div>
+        </div>
+        <div class="user-stat">
+          <div class="user-stat-label">Avg Risk Score</div>
+          <div class="user-stat-value" id="modal-avg-score">0.0</div>
+        </div>
+        <div class="user-stat">
+          <div class="user-stat-label">Alerts</div>
+          <div class="user-stat-value" id="modal-alert-count">0</div>
+        </div>
+        <div class="user-stat">
+          <div class="user-stat-label">Days Active</div>
+          <div class="user-stat-value" id="modal-days-active">0</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom: 20px;">Message History</div>
+      <div class="timeline" id="user-timeline">
+        <!-- Timeline items will be inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA STORAGE
+// ═══════════════════════════════════════════════════════════════
+
+let messageHistory = [];
+let userProfiles = {};
+let currentFilter = 'all';
+
+// ═══════════════════════════════════════════════════════════════
+// MOCK DATA GENERATOR (Replace with API calls)
+// ═══════════════════════════════════════════════════════════════
+
+const mockUsers = ['student_001', 'student_002', 'student_003', 'student_004', 'student_005'];
+const mockMessages = [
+  "I feel so alone lately",
+  "This exam is killing me",
+  "Nobody seems to care about me",
+  "I want to die, I can't go on",
+  "Been crying every night",
+  "Everything feels hopeless",
+  "I'm tired of everything",
+  "The pressure is too much"
+];
+
+function generateMockMessage() {
+  const userId = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+  const message = mockMessages[Math.floor(Math.random() * mockMessages.length)];
+  const riskScore = Math.floor(Math.random() * 100);
+  const isAlert = riskScore > 60;
+  const isSOS = message.includes('die') || message.includes('suicide');
+  
+  let riskLevel = 'LOW';
+  if (riskScore >= 75) riskLevel = 'CRITICAL';
+  else if (riskScore >= 55) riskLevel = 'HIGH';
+  else if (riskScore >= 35) riskLevel = 'MEDIUM';
+  
+  return {
+    userId,
+    message,
+    riskScore,
+    riskLevel,
+    alert: isAlert,
+    sos: isSOS,
+    timestamp: Date.now(),
+    sessionId: 'rsn-' + Math.random().toString(36).substr(2, 9)
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADD MESSAGE TO FEED
+// ═══════════════════════════════════════════════════════════════
+
+function addMessageToFeed(msg) {
+  // Store in history
+  messageHistory.unshift(msg);
+  if (messageHistory.length > 100) messageHistory.pop();
+  
+  // Update user profile
+  if (!userProfiles[msg.userId]) {
+    userProfiles[msg.userId] = {
+      messages: [],
+      totalScore: 0,
+      alerts: 0,
+      firstSeen: msg.timestamp
+    };
+  }
+  
+  userProfiles[msg.userId].messages.unshift(msg);
+  userProfiles[msg.userId].totalScore += msg.riskScore;
+  if (msg.alert) userProfiles[msg.userId].alerts++;
+  
+  // Update stats
+  updateStats();
+  
+  // Add to feed UI
+  if (currentFilter === 'all' || 
+      (currentFilter === 'high' && msg.riskLevel === 'HIGH' || msg.riskLevel === 'CRITICAL') ||
+      (currentFilter === 'sos' && msg.sos)) {
+    
+    const feedItem = createFeedItem(msg);
+    const feed = document.getElementById('live-feed');
+    feed.insertBefore(feedItem, feed.firstChild);
+    
+    // Keep only 20 items in feed
+    while (feed.children.length > 20) {
+      feed.removeChild(feed.lastChild);
+    }
+  }
+}
+
+function createFeedItem(msg) {
+  const item = document.createElement('div');
+  item.className = 'feed-item';
+  
+  const initial = msg.userId.charAt(0).toUpperCase();
+  const timeAgo = getTimeAgo(msg.timestamp);
+  
+  let riskBadgeClass = 'badge-low';
+  if (msg.riskLevel === 'CRITICAL') riskBadgeClass = msg.sos ? 'badge-sos' : 'badge-critical';
+  else if (msg.riskLevel === 'HIGH') riskBadgeClass = 'badge-high';
+  else if (msg.riskLevel === 'MEDIUM') riskBadgeClass = 'badge-medium';
+  
+  item.innerHTML = `
+    <div class="feed-avatar">${initial}</div>
+    <div class="feed-content">
+      <div class="feed-header">
+        <div class="feed-user" style="cursor: pointer;" onclick="showUserHistory('${msg.userId}')">
+          ${msg.userId}
+        </div>
+        <div class="feed-time">${timeAgo}</div>
+      </div>
+      <div class="feed-message">"${msg.message}"</div>
+      <div class="feed-meta">
+        <div class="meta-badge badge-score">${msg.riskScore.toFixed(1)}</div>
+        <div class="meta-badge ${riskBadgeClass}">${msg.riskLevel}</div>
+        ${msg.alert ? '<div class="meta-badge badge-high">ALERT</div>' : ''}
+        ${msg.sos ? '<div class="meta-badge badge-sos">🚨 SOS</div>' : ''}
+      </div>
+    </div>
+  `;
+  
+  return item;
+}
+
+function getTimeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+  if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+  return Math.floor(seconds / 86400) + 'd ago';
+}
+
+function updateStats() {
+  const totalMessages = messageHistory.length;
+  const totalAlerts = messageHistory.filter(m => m.alert).length;
+  const activeUsers = Object.keys(userProfiles).length;
+  const avgScore = totalMessages > 0 
+    ? (messageHistory.reduce((sum, m) => sum + m.riskScore, 0) / totalMessages).toFixed(1)
+    : 0;
+  
+  document.getElementById('total-messages').textContent = totalMessages;
+  document.getElementById('total-alerts').textContent = totalAlerts;
+  document.getElementById('active-users').textContent = activeUsers;
+  document.getElementById('avg-score').textContent = avgScore;
+  
+  document.getElementById('live-count').textContent = totalMessages;
+  document.getElementById('alert-count').textContent = totalAlerts;
+  
+  updateChart();
+}
+
+function updateChart() {
+  const chart = document.getElementById('risk-chart');
+  chart.innerHTML = '';
+  
+  const ranges = [
+    {label: '0-20', min: 0, max: 20},
+    {label: '20-40', min: 20, max: 40},
+    {label: '40-60', min: 40, max: 60},
+    {label: '60-80', min: 60, max: 80},
+    {label: '80-100', min: 80, max: 100}
+  ];
+  
+  const maxHeight = 280;
+  const counts = ranges.map(r => 
+    messageHistory.filter(m => m.riskScore >= r.min && m.riskScore < r.max).length
+  );
+  const maxCount = Math.max(...counts, 1);
+  
+  ranges.forEach((range, i) => {
+    const count = counts[i];
+    const height = (count / maxCount) * maxHeight;
+    
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = height + 'px';
+    bar.innerHTML = `<div class="chart-label">${range.label}</div>`;
+    bar.title = `${count} messages`;
+    
+    chart.appendChild(bar);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// USER HISTORY MODAL
+// ═══════════════════════════════════════════════════════════════
+
+function showUserHistory(userId) {
+  const profile = userProfiles[userId];
+  if (!profile) return;
+  
+  document.getElementById('modal-user-name').textContent = userId;
+  document.getElementById('modal-message-count').textContent = profile.messages.length;
+  document.getElementById('modal-avg-score').textContent = 
+    (profile.totalScore / profile.messages.length).toFixed(1);
+  document.getElementById('modal-alert-count').textContent = profile.alerts;
+  
+  const daysActive = Math.floor((Date.now() - profile.firstSeen) / (1000 * 60 * 60 * 24)) + 1;
+  document.getElementById('modal-days-active').textContent = daysActive;
+  
+  const timeline = document.getElementById('user-timeline');
+  timeline.innerHTML = '';
+  
+  profile.messages.forEach(msg => {
+    const item = document.createElement('div');
+    item.className = 'timeline-item';
+    
+    let riskBadgeClass = 'badge-low';
+    if (msg.riskLevel === 'CRITICAL') riskBadgeClass = msg.sos ? 'badge-sos' : 'badge-critical';
+    else if (msg.riskLevel === 'HIGH') riskBadgeClass = 'badge-high';
+    else if (msg.riskLevel === 'MEDIUM') riskBadgeClass = 'badge-medium';
+    
+    item.innerHTML = `
+      <div class="timeline-date">${new Date(msg.timestamp).toLocaleString()}</div>
+      <div class="timeline-message">"${msg.message}"</div>
+      <div class="timeline-badges">
+        <div class="meta-badge badge-score">${msg.riskScore.toFixed(1)}</div>
+        <div class="meta-badge ${riskBadgeClass}">${msg.riskLevel}</div>
+        ${msg.alert ? '<div class="meta-badge badge-high">ALERT</div>' : ''}
+        ${msg.sos ? '<div class="meta-badge badge-sos">🚨 SOS</div>' : ''}
+      </div>
+    `;
+    
+    timeline.appendChild(item);
+  });
+  
+  document.getElementById('user-modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('user-modal').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILTERS & ACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+function filterFeed(filter) {
+  currentFilter = filter;
+  
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  const feed = document.getElementById('live-feed');
+  feed.innerHTML = '';
+  
+  const filtered = messageHistory.filter(msg => {
+    if (filter === 'all') return true;
+    if (filter === 'high') return msg.riskLevel === 'HIGH' || msg.riskLevel === 'CRITICAL';
+    if (filter === 'sos') return msg.sos;
+    return true;
+  }).slice(0, 20);
+  
+  filtered.forEach(msg => {
+    feed.appendChild(createFeedItem(msg));
+  });
+}
+
+function refreshData() {
+  addMessageToFeed(generateMockMessage());
+}
+
+function exportData() {
+  const data = JSON.stringify({
+    messages: messageHistory,
+    users: userProfiles,
+    timestamp: Date.now()
+  }, null, 2);
+  
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rayza-data-${Date.now()}.json`;
+  a.click();
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTO-UPDATE (Simulate real-time feed)
+// ═══════════════════════════════════════════════════════════════
+
+setInterval(() => {
+  if (Math.random() > 0.7) { // 30% chance every 3 seconds
+    addMessageToFeed(generateMockMessage());
+  }
+}, 3000);
+
+// Initialize with some data
+for (let i = 0; i < 10; i++) {
+  addMessageToFeed(generateMockMessage());
+}
+
+// Close modal on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Close modal on outside click
+document.getElementById('user-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'user-modal') closeModal();
+});
+
+console.log('🧠 RAYZA Developer Dashboard Loaded');
+console.log('Dashboard will auto-update every 3 seconds');
+console.log('Replace generateMockMessage() with API calls to connect to your backend');
+</script>
+
+</body>
+</html>
