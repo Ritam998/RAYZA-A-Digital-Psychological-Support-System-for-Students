@@ -15,7 +15,7 @@ RAYZA provides:
 - Early warning alerts for potential mental distress
 
 The system does not perform medical diagnosis and does not replace professional care.
-
+     
 ---
 
 ## 2. Users
