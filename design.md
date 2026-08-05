@@ -13,7 +13,7 @@ The goal of the RAYZA model is to:
 
 ## 2. Input Signals
 
-Each user message contributes the following signals:
+Each user message contributes the following signals:     
 
 - Emotional intensity score (0–1)
 - Keyword severity weight
